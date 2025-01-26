@@ -1,5 +1,5 @@
 *{
-    background-color: black;
+    background-color: rgb(14, 14, 14);
     color: aliceblue;
 }
 
@@ -19,6 +19,7 @@
     margin-bottom: 20px;
     gap: 10px; /* Add space between slider and button */
 }
+
 .slider-container {
     display: inline-block;
     /* display: flex; */
@@ -30,15 +31,13 @@
 body {
     font-family: Arial, sans-serif;
     width: 100%;
-    height: auto;
     margin: 0;
-    padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100vh;
-    background-color: #000000;
+    /* background-color: #000000; */
 }
 
 .container {
@@ -47,12 +46,12 @@ body {
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 100vh; /* Ensures the graph stays vertically centered */
+    height: calc(100vh - 40px); 
 }
 
 #graph {
     width: 100%;
-    height: 100%; 
+    height: 90vh; 
     display: block;
     align-items: center;
     justify-content: center;
@@ -76,7 +75,7 @@ input::-webkit-slider-runnable-track {
     max-width: 500px; 
   }
   
-  #reset-button {
+#reset-button, #prev-button, #next-button, #play-button, #pause-button {
     padding: 5px 10px;
     background-color: #313030;
     border: 1px solid #ccc;
@@ -85,10 +84,10 @@ input::-webkit-slider-runnable-track {
     white-space: nowrap; 
 }
 
-  #reset-button:hover {
-    background-color: #4e4e4e;
-  }
-  
+#reset-button:hover, #prev-button:hover, #next-button:hover, #play-button:hover, #pause-button:hover {
+background-color: #4e4e4e;
+}
+
 #controls {
     margin: 10px;
     display: flex;

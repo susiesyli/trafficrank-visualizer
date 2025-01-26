@@ -12,11 +12,18 @@
     <div class="container">
         <h1>TrafficRank Visualization</h1>
         <div class="iteration-label">Iteration 0</div>
-            <div class="slider-container">
-                <input type="range" id="slider" min="0" max="15" step="1" value="0" style="width: 100%;">
-                <button id="reset-button">Reset</button>
-            </div>
+        <div class="slider-container">
+            <input type="range" id="slider" min="0" max="15" step="1" value="0" style="width: 100%;">
+        </div>
+        <div class="iteration-controls">
+            <button id="prev-button">Previous</button>
+            <button id="next-button">Next</button>
+            <button id="reset-button">Reset</button>
+            <button id="play-button">Play</button>
+            <button id="pause-button">Pause</button>
+        </div>
         <svg id="graph"></svg>
+        <div id="tooltip" style="position: absolute; background-color: rgba(0, 0, 0, 0.7); color: white; padding: 10px; border-radius: 5px; display: none;"></div>
     </div>
   
   <script>
@@ -24,21 +31,25 @@
       .then(response => response.json())
       .then(rankHistory => {
         const width = window.innerWidth;
-        const height = window.innerHeight;
+        const height = window.innerHeight * 0.7;
+        // const width = 800;
+        // const height = 600;
 
         const svg = d3.select('#graph')
-            .attr('width', width)
-            .attr('height', height);
+            .attr('width', '80%')
+            .attr('height', '80%')
+            .attr('transform', `translate(${width / 2}, ${height / 2})`);
+            // .attr('transform', `translate(${svg.attr('width') / 2}, ${svg.attr('height') / 2})`);
 
         const g = svg.append('g');
         const numAreas = 77;
 
         // Initialize the simulation
         const simulation = d3.forceSimulation()
-          .force('charge', d3.forceManyBody().strength(-1000)) // Reduce repulsion
+          .force('charge', d3.forceManyBody().strength(-800)) // Reduce repulsion
           .force('center', d3.forceCenter(width / 2, height / 2)) // Center the graph
-          .force('collision', d3.forceCollide(15)) // Closer nodes
-          .force('link', d3.forceLink().distance(1)); // Shorter links
+          .force('collision', d3.forceCollide(5)) // Closer nodes
+          .force('link', d3.forceLink().distance(0.1)); // Shorter links
 
         // Create nodes array and initialize positions
         const nodes = Array.from({ length: numAreas }, (_, i) => ({
@@ -63,8 +74,10 @@
           .append('line')
           .attr('class', 'link')
           .attr('stroke', "rgb(130,130,130)")
-          .attr('stroke-opacity', 0.5)
-          .attr('stroke-width', 0.15);
+          .attr('stroke-opacity', 0.65)
+          .attr('stroke-width', 0.25);
+
+          const tooltip = d3.select("#tooltip");
 
         // Create node elements
         const node = g.selectAll('.node')
@@ -73,11 +86,22 @@
           .append('circle')
           .attr('class', 'node')
           .attr('r', d => d.rank * 500) // Scale size based on rank
-          .attr('fill', "rgba(129,186,173, 1)")
+          .attr('fill', "rgba(199,256,243, 0.7)")
           .call(d3.drag()  // Enable dragging of nodes
             .on('start', dragStart)
             .on('drag', dragged)
-            .on('end', dragEnd));
+            .on('end', dragEnd))
+            .on('mouseover', function(event, d) {
+            // Show tooltip with node info
+            tooltip.style('display', 'block')
+                .html(`Area: ${d.id}<br>TrafficRank: ${d.rank.toFixed(4)}`)
+                .style('left', (event.pageX + 10) + 'px')
+                .style('top', (event.pageY + 10) + 'px');
+            })
+            .on('mouseout', function() {
+                // Hide tooltip
+                tooltip.style('display', 'none');
+            });
 
 
         const text = g.selectAll('.label')
@@ -102,7 +126,7 @@
           node
             .transition()
             .duration(500)
-            .attr('r', d => Math.sqrt(d.rank) * 50);
+            .attr('r', d => Math.sqrt(d.rank) * 100);
 
           // Update link positions
           link
@@ -151,30 +175,32 @@
         let currentIteration = 0;
         let isPaused = false; // Flag to check if slider is in use
 
+        // Buttons for iteration controls
+        const prevButton = document.getElementById('prev-button');
+        const nextButton = document.getElementById('next-button');
+        const playButton = document.getElementById('play-button');
+        const pauseButton = document.getElementById('pause-button');
+        const resetButton = document.getElementById('reset-button');
+
+
         // Function to update the graph for a specific iteration
         function updateGraphForIteration(iteration) {
             document.querySelector('.iteration-label').textContent = `Iteration ${iteration}`;
             updateGraph(rankHistory[iteration].ranks);
         }
 
-        // Function to start the automatic animation
-        // function startAutomaticAnimation() {
-        //     setInterval(() => {
-        //         if (!isPaused && currentIteration < rankHistory.length - 1) {
-        //         currentIteration++;
-        //         updateGraphForIteration(currentIteration);
-        //         }
-        //     }, 600);
-        // }
+        /// Function to start automatic animation
+        let intervalId;
+        let isPlaying = false;
+
         function startAutomaticAnimation() {
-            const intervalId = setInterval(() => {
-                if (!isPaused && currentIteration < rankHistory.length - 1) {
+            intervalId = setInterval(() => {
+                if (currentIteration < rankHistory.length - 1) {
                     currentIteration++;
                     updateGraphForIteration(currentIteration);
-                    
                     // Synchronize slider position with current iteration
                     slider.value = currentIteration;
-                } else if (currentIteration >= rankHistory.length - 1) {
+                } else { // if (currentIteration >= rankHistory.length - 1)
                     clearInterval(intervalId); // Stop the animation when reaching the end
                 }
             }, 600);
@@ -182,6 +208,40 @@
 
         // Start the automatic animation
         startAutomaticAnimation();
+
+        function stopAutomaticAnimation() {
+            clearInterval(intervalId);
+            isPlaying = false;
+            playButton.style.display = 'inline-block';
+            pauseButton.style.display = 'none';
+        }
+
+        // Handle "Previous" and "Next" buttons
+        prevButton.addEventListener('click', () => {
+            if (currentIteration > 0) {
+                currentIteration--;
+                updateGraphForIteration(currentIteration);
+            }
+        });
+
+        nextButton.addEventListener('click', () => {
+            if (currentIteration < rankHistory.length - 1) {
+                currentIteration++;
+                updateGraphForIteration(currentIteration);
+            }
+        });
+
+        // Handle "Play" and "Pause" buttons
+        playButton.addEventListener('click', () => {
+            isPlaying = true;
+            playButton.style.display = 'none';
+            pauseButton.style.display = 'inline-block';
+            startAutomaticAnimation();
+        });
+
+        pauseButton.addEventListener('click', () => {
+            stopAutomaticAnimation();
+        });
 
         // slider functionality
         const slider = document.getElementById('slider');
@@ -199,14 +259,12 @@
         });
 
         // Reset button to restart the animation
-        const resetButton = document.getElementById('reset-button');
-        // resetButton.textContent = 'Restart Animation';
         resetButton.addEventListener('click', () => {
             currentIteration = 0;
             slider.value = 0;
             isPaused = false;
             updateGraphForIteration(currentIteration);
-            startAutomaticAnimation(); // Restart the animation
+            startAutomaticAnimation();  
         });
         document.querySelector('.container').appendChild(resetButton);
 
