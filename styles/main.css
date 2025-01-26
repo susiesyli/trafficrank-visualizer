@@ -4,11 +4,26 @@
 }
 
 .iteration-label {
-    font-size: 16px;
+    font-size: 1.5em;
     font-weight: bold;
     margin-bottom: 10px;
     color: aliceblue;
 }
+
+.iteration-controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    gap: 10px; /* Add space between slider and button */
+}
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adds space between the slider and button */
+}
+
 
 body {
     font-family: Arial, sans-serif;
@@ -43,6 +58,35 @@ body {
     /* border: 1px solid #ccc; */
 }
 
+input::-webkit-slider-runnable-track {
+    /* -webkit-appearance: none; */
+    /* position: relative; */
+    /* box-sizing: ; */
+    background-color: rgb(53, 53, 53);
+    /* width: 100%; */
+    /* height: 20px;  */
+    border-radius: 5px;
+    overflow: hidden;
+  } 
+
+#slider {
+    flex-grow: 1; 
+    max-width: 500px; 
+  }
+  
+  #reset-button {
+    padding: 5px 10px;
+    background-color: #313030;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    cursor: pointer;
+    white-space: nowrap; /* Prevent button from wrapping */
+}
+
+  #reset-button:hover {
+    background-color: #4e4e4e;
+  }
+  
 #controls {
     margin: 10px;
     display: flex;
