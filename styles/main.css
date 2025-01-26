@@ -4,6 +4,7 @@
 }
 
 .iteration-label {
+    display: inline-block;
     font-size: 1.5em;
     font-weight: bold;
     margin-bottom: 10px;
@@ -19,7 +20,8 @@
     gap: 10px; /* Add space between slider and button */
 }
 .slider-container {
-    display: flex;
+    display: inline-block;
+    /* display: flex; */
     align-items: center;
     gap: 10px; /* Adds space between the slider and button */
 }
@@ -80,7 +82,7 @@ input::-webkit-slider-runnable-track {
     border: 1px solid #ccc;
     border-radius: 2px;
     cursor: pointer;
-    white-space: nowrap; /* Prevent button from wrapping */
+    white-space: nowrap; 
 }
 
   #reset-button:hover {

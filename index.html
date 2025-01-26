@@ -12,10 +12,10 @@
     <div class="container">
         <h1>TrafficRank Visualization</h1>
         <div class="iteration-label">Iteration 0</div>
-        <div class="slider-container">
-            <input type="range" id="slider" min="0" max="15" step="1" value="0">
-            <button id="reset-button">Reset</button>
-          </div>
+            <div class="slider-container">
+                <input type="range" id="slider" min="0" max="15" step="1" value="0" style="width: 100%;">
+                <button id="reset-button">Reset</button>
+            </div>
         <svg id="graph"></svg>
     </div>
   
@@ -23,8 +23,8 @@
     fetch('data/traffic.json')
       .then(response => response.json())
       .then(rankHistory => {
-        const width = screen.width;
-        const height = screen.height;
+        const width = window.innerWidth;
+        const height = window.innerHeight;
 
         const svg = d3.select('#graph')
             .attr('width', width)
@@ -37,7 +37,7 @@
         const simulation = d3.forceSimulation()
           .force('charge', d3.forceManyBody().strength(-1000)) // Reduce repulsion
           .force('center', d3.forceCenter(width / 2, height / 2)) // Center the graph
-          .force('collision', d3.forceCollide(25)) // Closer nodes
+          .force('collision', d3.forceCollide(15)) // Closer nodes
           .force('link', d3.forceLink().distance(1)); // Shorter links
 
         // Create nodes array and initialize positions
