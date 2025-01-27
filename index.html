@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TrafficRank Visualization</title>
+  <title>TrafficRank Algorithm Visualization</title>
   <link rel="stylesheet" href="styles/main.css">
   <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
@@ -45,7 +45,7 @@
 
         // Initialize the simulation
         const simulation = d3.forceSimulation()
-          .force('charge', d3.forceManyBody().strength(-600)) // Reduce repulsion
+          .force('charge', d3.forceManyBody().strength(-800)) // positive: attract, negative: repulse 
           .force('center', d3.forceCenter(width / 2, height / 2)) // Center the graph
           .force('collision', d3.forceCollide(5)) // Closer nodes
           .force('link', d3.forceLink().distance(0.1)); // Shorter links
@@ -85,7 +85,7 @@
           .append('circle')
           .attr('class', 'node')
           .attr('r', d => d.rank * 500) // Scale size based on rank
-          .attr('fill', "rgba(239,256,250, 0.9)")
+          .attr('fill', "rgba(250,256,250, 0.9)")
           .call(d3.drag()  // Enable dragging of nodes
             .on('start', dragStart)
             .on('drag', dragged)
@@ -175,11 +175,11 @@
         let isPaused = false; // Flag to check if slider is in use
 
         // Buttons for iteration controls
+        const resetButton = document.getElementById('reset-button');
         const prevButton = document.getElementById('prev-button');
         const nextButton = document.getElementById('next-button');
         const playButton = document.getElementById('play-button');
         const pauseButton = document.getElementById('pause-button');
-        const resetButton = document.getElementById('reset-button');
 
 
         // Function to update the graph for a specific iteration
