@@ -3,6 +3,21 @@
     color: aliceblue;
 }
 
+a:link { /* unvisited link */
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+}
+
+a:visited {
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+}
+
+a:hover { /* a:hover must come after a:link and a:visited */
+    text-decoration: none;
+    color: rgb(148, 148, 148);
+}
+
 .iteration-label {
     display: inline-block;
     font-size: 1.5em;
